@@ -1,4 +1,4 @@
-import { useDayTimeStore } from "../store/useDayTimeStore";
+import { useDayTimeStore } from "../../../store/useDayTimeStore";
 import { BsSunrise, BsSun, BsMoon } from "react-icons/bs";
 
 export const DayTime = () => {
@@ -9,7 +9,7 @@ export const DayTime = () => {
   };
 
   return (
-    <div className="flex justify-center gap-3">
+    <div className="flex justify-center gap-5">
       <button
         className={`${getIconOpacity("morning")}`}
         onClick={() => setSelectedTime("morning")}
