@@ -6,6 +6,7 @@ import Root from "./routes/root.jsx";
 import SignIn from "./routes/signin.jsx";
 import SignUp from "./routes/signup.jsx";
 import NotFound from "./routes/notFound.jsx";
+import Dashboard from "./routes/dashboard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUp />,
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
   },
 ]);
 
