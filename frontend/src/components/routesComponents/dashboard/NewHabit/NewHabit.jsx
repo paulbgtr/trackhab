@@ -1,14 +1,20 @@
 import { useState } from "react";
+import { AddHabitForm } from "./AddHabitForm";
 
 export const NewHabit = () => {
   const [isClicked, setIsClicked] = useState(false);
 
   return (
     <div
-      onClick={() => setIsClicked(!isClicked)}
-      className={`hover:cursor-pointer rounded-xl min-w-xl border-2 border-dashed border-gray-400 px-7 py-5`}
+      onClick={() => setIsClicked(true)}
+      className={` ${
+        !isClicked && "duration-200 hover:cursor-pointer hover:opacity-70"
+      } 
+      rounded-xl min-w-xl border-2 border-dashed border-gray-400 px-7 py-5`}
     >
       {isClicked ? (
+        <AddHabitForm />
+      ) : (
         <div className="flex justify-between">
           <div className="my-auto mx-4">
             <h3 className={`font-bold text-gray-400`}>New Habit</h3>
@@ -17,8 +23,6 @@ export const NewHabit = () => {
             +
           </span>
         </div>
-      ) : (
-        <div>Clicked</div>
       )}
     </div>
   );
