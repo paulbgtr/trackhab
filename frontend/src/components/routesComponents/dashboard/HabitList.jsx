@@ -1,5 +1,5 @@
 import { Habit } from "./Habit";
-import { NewHabit } from "./NewHabit";
+import { NewHabit } from "./NewHabit/NewHabit";
 
 export const HabitList = ({ dayTime }) => {
   return (
