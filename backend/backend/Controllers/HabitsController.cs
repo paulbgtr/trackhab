@@ -63,6 +63,7 @@ public class HabitsController : ControllerBase
 
         habitExists.Title = habit.Title;
         habitExists.IsDone = habit.IsDone;
+        habitExists.DaysOfWeek = habit.DaysOfWeek;
 
         _context.SaveChanges();
 
