@@ -18,5 +18,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapGet("/", () => "Hello World!");
+app.MapControllers();
 
 app.Run();
