@@ -10,4 +10,5 @@ public class ApiContext : DbContext
     }
 
     public DbSet<Habit> Habits { get; set; }
+    public DbSet<User> Users { get; set; }
 }
