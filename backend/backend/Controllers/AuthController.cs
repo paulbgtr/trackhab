@@ -1,5 +1,6 @@
 using backend.Data;
 using backend.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
@@ -15,38 +16,43 @@ public class AuthController : ControllerBase
         _context = context;
     }
 
-    [HttpPost]
+    [HttpPost("login")]
     public JsonResult Login(User user)
     {
-        var foundUser = _context.Users.Find(user.Id);
+        var foundUser = _context.Users.FirstOrDefault(usr => usr.Email == user.Email);
 
         if (foundUser == null)
             return new JsonResult("User not found") { StatusCode = 404 };
 
-        if (foundUser.Password != user.Password)
-            return new JsonResult("Invalid password") { StatusCode = 400 };
+        var hasher = new PasswordHasher<User>();
+        var passwordVerification = hasher.VerifyHashedPassword(foundUser, foundUser.Password, user.Password);
+
+        if (passwordVerification != PasswordVerificationResult.Success)
+            return new JsonResult("Invalid Password") { StatusCode = 401 };
 
         // todo: implement JWT token generation
 
         return new JsonResult(foundUser);
     }
 
-    [HttpPost]
+    [HttpPost("register")]
     public JsonResult Register(User user)
     {
-        var userExists = _context.Users.Find(user.Email);
+        var userExists = _context.Users.FirstOrDefault(usr => usr.Email == user.Email);
 
         if (userExists != null)
             return new JsonResult("User with that email already exists") { StatusCode = 400 };
 
-        // todo: implement hashing of password
+        var hasher = new PasswordHasher<User>();
+        user.Password = hasher.HashPassword(user, user.Password);
 
         _context.Users.Add(user);
+        _context.SaveChanges();
 
         return new JsonResult("Successfully registered user");
     }
 
-    [HttpDelete]
+    [HttpDelete("{userId}")]
     public JsonResult Delete(int userId)
     {
         var userExists = _context.Users.Find(userId);
