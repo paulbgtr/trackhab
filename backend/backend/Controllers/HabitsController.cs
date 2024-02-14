@@ -1,9 +1,11 @@
 using backend.Data;
 using backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
 
+[Authorize]
 [Route("[controller]")]
 [ApiController]
 public class HabitsController : ControllerBase
