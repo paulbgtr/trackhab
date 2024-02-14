@@ -1,7 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using backend.Data;
 using backend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Controllers;
 
@@ -9,11 +13,35 @@ namespace backend.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
+    private readonly IConfiguration _config;
     private readonly ApiContext _context;
 
-    public AuthController(ApiContext context)
+    public AuthController(ApiContext context, IConfiguration config)
     {
         _context = context;
+        _config = config;
+    }
+
+    private string GenerateJwtToken(User user)
+    {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+
+        var token = new JwtSecurityToken(
+            _config["Jwt:Issuer"],
+            _config["Jwt:Audience"],
+            claims,
+            expires: DateTime.Now.AddMinutes(120),
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     [HttpPost("login")]
@@ -30,9 +58,16 @@ public class AuthController : ControllerBase
         if (passwordVerification != PasswordVerificationResult.Success)
             return new JsonResult("Invalid Password") { StatusCode = 401 };
 
-        // todo: implement JWT token generation
+        var token = GenerateJwtToken(foundUser);
 
-        return new JsonResult(foundUser);
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = DateTimeOffset.Now.AddMinutes(120)
+        };
+        Response.Cookies.Append("jwt", token, cookieOptions);
+
+        return new JsonResult(new { user = foundUser.Email });
     }
 
     [HttpPost("register")]
