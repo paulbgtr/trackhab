@@ -87,7 +87,7 @@ public class AuthController : ControllerBase
         return new JsonResult("Successfully registered user");
     }
 
-    [HttpPost]
+    [HttpPost("logout")]
     public JsonResult Logout()
     {
         if (!Request.Cookies.ContainsKey("jwt")) return new JsonResult("User is not logged in") { StatusCode = 401 };
