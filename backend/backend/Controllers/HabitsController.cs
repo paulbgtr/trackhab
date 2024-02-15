@@ -17,12 +17,14 @@ public class HabitsController : ControllerBase
         _context = context;
     }
 
-    [HttpGet]
-    public JsonResult Get(int habitId)
+    [HttpGet("{habitId}")]
+    public JsonResult Get(int habitId, int userId)
     {
-        var foundHabit = _context.Habits.Find(habitId);
+        var foundHabit = _context.Habits
+            .Where(hbt => hbt.Id == habitId && hbt.UserId == userId)
+            .ToList();
 
-        if (foundHabit == null)
+        if (!foundHabit.Any())
             return new JsonResult($"Habit with and id of {habitId} is not found") { StatusCode = 404 };
 
         return new JsonResult(foundHabit);
@@ -31,6 +33,8 @@ public class HabitsController : ControllerBase
     [HttpPost]
     public JsonResult Create(Habit habit)
     {
+        // todo: get the user identificator from the payload
+
         var habitExists = _context.Habits.Find(habit.Id);
 
         if (habitExists != null) return new JsonResult("Habit already exists") { StatusCode = 400 };
@@ -41,7 +45,7 @@ public class HabitsController : ControllerBase
         return new JsonResult(habit);
     }
 
-    [HttpDelete]
+    [HttpDelete("{habitId}")]
     public JsonResult Delete(int habitId)
     {
         var habitExists = _context.Habits.Find(habitId);
