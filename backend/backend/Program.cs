@@ -1,5 +1,6 @@
 using System.Text;
 using backend.Data;
+using backend.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -35,6 +36,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<JwtCookieToHeader>();
 
 app.UseAuthentication();
 app.UseAuthorization();
