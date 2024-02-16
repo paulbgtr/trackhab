@@ -1,6 +1,6 @@
-using System.IdentityModel.Tokens.Jwt;
 using backend.Data;
 using backend.Models;
+using backend.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,24 +18,6 @@ public class HabitsController : ControllerBase
         _context = context;
     }
 
-    private int ExtractUserIdFromToken(HttpRequest request)
-    {
-        var token = request.Headers.Authorization.ToString().Split(" ")[1];
-
-        var handler = new JwtSecurityTokenHandler();
-
-        var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
-
-        var userIdClaim = jsonToken?.Claims.First(claim => claim.Type == "nameid").Value;
-
-        if (userIdClaim != null)
-        {
-            var userId = int.Parse(userIdClaim);
-            return userId;
-        }
-
-        return -1;
-    }
 
     [HttpGet("{habitId}")]
     public JsonResult Get(int habitId, int userId)
@@ -53,7 +35,9 @@ public class HabitsController : ControllerBase
     [HttpPost]
     public JsonResult Create(Habit habit)
     {
-        var userId = ExtractUserIdFromToken(Request);
+        var token = Request.Headers.Authorization.ToString().Split(" ")[1];
+
+        var userId = JwtUtils.ExtractUserIdFromToken(token);
 
         var habitExists = _context.Habits.Find(habit.Id);
 
