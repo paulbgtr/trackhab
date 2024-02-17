@@ -1,4 +1,6 @@
-## trackhab - A habit management API written in C#
+# trackhab
+
+> A habit management API written in C#
 
 ## Setting up and running the project
 
